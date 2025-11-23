@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/ryanmalonzo/eat-that-frog-cli/internal/db"
 	"github.com/spf13/cobra"
@@ -18,7 +17,7 @@ var doneCmd = &cobra.Command{
 			return err
 		}
 
-		err = db.MarkFrogAsDone(frog, time.Now())
+		err = db.MarkFrogAsDone(frog)
 		if err != nil {
 			return err
 		}

@@ -137,28 +137,25 @@ func GetTodayFrog() (string, error) {
 	}
 }
 
-func MarkFrogAsDone(task string, timestamp time.Time) error {
+func updateFrogStatus(task string, status string, timestamp time.Time) error {
 	db, err := GetDB()
+
 	if err != nil {
 		return err
 	}
 
 	defer db.Close()
 
-	_, err = db.Exec("UPDATE frogs SET status = 'done', updated_at = ? WHERE date = CURRENT_DATE AND task = ?", timestamp, task)
+	_, err = db.Exec("UPDATE frogs SET status = ?, updated_at = ? WHERE date = CURRENT_DATE AND task = ?", status, timestamp, task)
 	return err
 }
 
+func MarkFrogAsDone(task string) error {
+	return updateFrogStatus(task, "done", time.Now())
+}
+
 func SkipTodayFrog(task string) error {
-	db, err := GetDB()
-	if err != nil {
-		return err
-	}
-
-	defer db.Close()
-
-	_, err = db.Exec("UPDATE frogs SET status = 'skip', updated_at = ? WHERE date = CURRENT_DATE AND task = ?", time.Now(), task)
-	return err
+	return updateFrogStatus(task, "skip", time.Now())
 }
 
 func createTables(db *sql.DB) error {
