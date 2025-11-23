@@ -29,12 +29,15 @@ func initCommands() {
 	rootCmd.AddCommand(todayCmd)
 	rootCmd.AddCommand(clearCmd)
 }
+
 func Execute() {
 	// Initialize the database
 	if err := db.Init(); err != nil {
 		fmt.Fprintln(os.Stderr, "Error initializing database:", err)
 		os.Exit(1)
 	}
+	defer db.Close()
+
 	initCommands()
 
 	if err := rootCmd.Execute(); err != nil {
