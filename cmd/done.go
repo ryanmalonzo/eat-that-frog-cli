@@ -26,7 +26,3 @@ var doneCmd = &cobra.Command{
 		return nil
 	},
 }
-
-func init() {
-	rootCmd.AddCommand(doneCmd)
-}

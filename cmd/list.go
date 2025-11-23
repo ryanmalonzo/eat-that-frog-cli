@@ -27,7 +27,3 @@ var listCmd = &cobra.Command{
 		return PrintAllCandidates(cmd)
 	},
 }
-
-func init() {
-	rootCmd.AddCommand(listCmd)
-}

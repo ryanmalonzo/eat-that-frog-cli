@@ -15,7 +15,3 @@ var addCmd = &cobra.Command{
 		return db.AddCandidate(task)
 	},
 }
-
-func init() {
-	rootCmd.AddCommand(addCmd)
-}

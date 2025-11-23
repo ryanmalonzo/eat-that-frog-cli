@@ -56,7 +56,3 @@ var pickCmd = &cobra.Command{
 		}
 	},
 }
-
-func init() {
-	rootCmd.AddCommand(pickCmd)
-}

@@ -20,12 +20,22 @@ var rootCmd = &cobra.Command{
 	},
 }
 
+func initCommands() {
+	rootCmd.AddCommand(addCmd)
+	rootCmd.AddCommand(listCmd)
+	rootCmd.AddCommand(pickCmd)
+	rootCmd.AddCommand(doneCmd)
+	rootCmd.AddCommand(skipCmd)
+	rootCmd.AddCommand(todayCmd)
+	rootCmd.AddCommand(clearCmd)
+}
 func Execute() {
 	// Initialize the database
 	if err := db.Init(); err != nil {
 		fmt.Fprintln(os.Stderr, "Error initializing database:", err)
 		os.Exit(1)
 	}
+	initCommands()
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Fprintln(os.Stderr, err)

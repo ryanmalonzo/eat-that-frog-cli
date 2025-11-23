@@ -13,7 +13,3 @@ var clearCmd = &cobra.Command{
 		return db.DeleteAllCandidates()
 	},
 }
-
-func init() {
-	rootCmd.AddCommand(clearCmd)
-}

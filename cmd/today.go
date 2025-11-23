@@ -34,7 +34,3 @@ var todayCmd = &cobra.Command{
 		return nil
 	},
 }
-
-func init() {
-	rootCmd.AddCommand(todayCmd)
-}
