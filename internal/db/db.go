@@ -3,6 +3,7 @@ package db
 
 import (
 	"database/sql"
+	"time"
 
 	_ "modernc.org/sqlite"
 )
@@ -134,6 +135,18 @@ func GetTodayFrog() (string, error) {
 
 		return task, nil
 	}
+}
+
+func MarkFrogAsDone(task string, timestamp time.Time) error {
+	db, err := GetDB()
+	if err != nil {
+		return err
+	}
+
+	defer db.Close()
+
+	_, err = db.Exec("UPDATE frogs SET status = 'done', updated_at = ? WHERE date = CURRENT_DATE AND task = ?", timestamp, task)
+	return err
 }
 
 func createTables(db *sql.DB) error {
