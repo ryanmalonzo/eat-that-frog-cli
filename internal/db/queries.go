@@ -59,9 +59,23 @@ func PickCandidate(index int) error {
 		return err
 	}
 
-	_, err = tx.Exec("INSERT INTO frogs (date, task, status) VALUES (CURRENT_DATE, ?, 'pending')", task)
+	var oldTask string
+	err = tx.QueryRow("SELECT task FROM frogs WHERE date = CURRENT_DATE").Scan(&oldTask)
+	if err != nil && err != sql.ErrNoRows {
+		return err
+	}
+
+	_, err = tx.Exec("INSERT INTO frogs (date, task, status) VALUES (CURRENT_DATE, ?, 'pending') ON CONFLICT(date) DO UPDATE SET task = ?", task, task)
 	if err != nil {
 		return err
+	}
+
+	if err != sql.ErrNoRows {
+		// Put back the previous frog in the list of candidates
+		_, err = tx.Exec("INSERT INTO candidates (task) VALUES (?)", oldTask)
+		if err != nil {
+			return err
+		}
 	}
 
 	_, err = tx.Exec("DELETE FROM candidates WHERE id = ?", id)
@@ -96,4 +110,3 @@ func MarkFrogAsDone(task string) error {
 func SkipTodayFrog(task string) error {
 	return updateFrogStatus(task, "skip", time.Now())
 }
-
