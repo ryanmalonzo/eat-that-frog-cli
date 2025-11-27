@@ -24,6 +24,7 @@ func initCommands() {
 	rootCmd.AddCommand(addCmd)
 	rootCmd.AddCommand(listCmd)
 	rootCmd.AddCommand(pickCmd)
+	rootCmd.AddCommand(eatCmd)
 	rootCmd.AddCommand(doneCmd)
 	rootCmd.AddCommand(skipCmd)
 	rootCmd.AddCommand(todayCmd)

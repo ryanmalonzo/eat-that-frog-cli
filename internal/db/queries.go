@@ -112,3 +112,35 @@ func MarkFrogAsDone(task string) error {
 func SkipTodayFrog(task string) error {
 	return updateFrogStatus(task, "skip", time.Now())
 }
+
+func SetTodayFrog(task string) error {
+	tx, err := dbPool.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	// Check if there's an existing frog for today
+	var oldTask string
+	var oldStatus string
+	err = tx.QueryRow("SELECT task, status FROM frogs WHERE date = CURRENT_DATE").Scan(&oldTask, &oldStatus)
+	if err != nil && err != sql.ErrNoRows {
+		return err
+	}
+
+	// Set the new frog for today
+	_, err = tx.Exec("INSERT INTO frogs (date, task, status) VALUES (CURRENT_DATE, ?, 'pending') ON CONFLICT(date) DO UPDATE SET task = ?, status = 'pending'", task, task)
+	if err != nil {
+		return err
+	}
+
+	// Only add the old frog back to candidates if it existed and was still pending
+	if err != sql.ErrNoRows && oldStatus == "pending" {
+		_, err = tx.Exec("INSERT INTO candidates (task) VALUES (?)", oldTask)
+		if err != nil {
+			return err
+		}
+	}
+
+	return tx.Commit()
+}
