@@ -6,15 +6,23 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var force bool
+
 var clearCmd = &cobra.Command{
 	Use:   "clear",
 	Short: "Clear all candidate frogs",
 	Long:  `Clear all tasks from your list of candidate frogs.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		confirmDelete := utils.AskForConfirmation(cmd, "Do you really want to clear all candidate frogs?", false)
-		if confirmDelete {
-			return db.DeleteAllCandidates()
+		if !force {
+			confirmDelete := utils.AskForConfirmation(cmd, "Do you really want to clear all candidate frogs?", false)
+			if !confirmDelete {
+				return nil
+			}
 		}
-		return nil
+		return db.DeleteAllCandidates()
 	},
+}
+
+func init() {
+	clearCmd.Flags().BoolVarP(&force, "yes", "y", false, "Skip confirmation prompt")
 }
